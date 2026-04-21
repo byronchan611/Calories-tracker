@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Byron's Super Bang Bang Amazing Bodyweight Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<h1 id="title" onclick="goHome()">Byron's Super Bang Bang Amazing Bodyweight Tracker</h1>
+<button class="tablink" onclick="openPage('Home', this, 'red')" id="homeTab" style="display:none;">
+  Home
+</button>
+
+<!-- <button class="tablink" onclick="openPage('Home', this, 'red')" id="defaultOpen">Home</button> -->
+<button class="tablink" onclick="openPage('Bodyweight', this, 'green')">Bodyweight</button>
+<button class="tablink" onclick="openPage('Calories', this, 'blue')">Calories</button>
+<button class="tablink" onclick="openPage('Ingredients', this, 'orange')" >Ingredients</button>
+<button class="tablink" onclick="openPage('Meals', this, 'purple')" >Meals</button>
+
+
+<div id="Home" class="tabcontent">
+  <h1>Me trying to build something</h1>  
+  <p>Wow this bodyweight tracker is so cool</p>
+</div>
+
+<div id="Bodyweight" class="tabcontent">
+
+  <div class="container">
+    <input id="weightInput" type="number" placeholder="Enter your weight (non-freedom units)" />
+    <button onclick="addWeight()">Add</button>
+  </div>
+
+  <h2>History</h2>
+  <h2>Progress Graph</h2>
+  <canvas id="weightChart"></canvas>
+  <ul id="weightList"></ul>
+
+  <button type="button" onclick="deleteInput()">Delete All Entries</button>
+
+  <script src="script.js"></script>
+  
+</div>
+
+<div id="Calories" class="tabcontent">
+  <h1>Construct your meals</h1>
+    <h2>Pre-set meals (by macros)</h2>
+
+    <button onclick="openPopup()">Add Pre-set Meal</button>
+
+    <!-- popup window -->
+    <div id="popup" class="modal">
+      <div class="modal-content">
+        <h3>Enter Macros</h3>
+
+        <input id="mealname" type="text" placeholder="Meal name">
+        <input id="newcal" type="number" placeholder="Calories (kcal)">
+        <input id="newcarbs" type="number" placeholder="Carbohydrates (g)">
+        <input id="newfat" type="number" placeholder="Fats (g)">
+        <input id="newprotein" type="number" placeholder="Protein (g)">
+
+        <button onclick="submitForm()">Submit</button>
+        <button onclick="closePopup()">Close</button>
+      </div>
+    </div>
+
+
+    <h2>Pre-set meals (by ingredients)</h2>
+    
+    <button onclick="openPopupIng()">Add Pre-set Meal</button>
+
+    <!-- popup window -->
+    <div id="popup_ing" class="modal">
+      <div class="modal-content">
+        <h3>Enter Macros</h3>
+
+        <input id="newmealname" type="text" placeholder="Meal Name">
+
+        <select id="ingredientSelect">
+        <option value="">Select an ingredient</option>
+        </select>
+
+        <input id="amount" type="number" placeholder="Amount (g)">
+
+        <button onclick="addIngredients()">Add</button>
+        <button onclick="constructMeal()">Construct Meal</button>
+        <ul id="ingy_list"></ul>
+        <button onclick="closePopupIng()">Close</button>
+      </div>
+    </div>
+    
+    <div class="container">
+
+    <h2>Log your meals</h2>
+
+    <h3>From pre-set meals</h3>
+    <select id="mealSelect" onchange="selectPresetMeal()">
+    <option value="">Select a meal</option>
+    </select>
+    <button onclick="deletePresetMeal()">Delete Selected Meal</button>
+
+    <h3>New meal</h3>
+    <input id="calories" type="number" placeholder="Calories (kcal)" />
+    <input id="carbohydrates" type="number" placeholder="Carbohydrates (g)" />
+    <input id="fats" type="number" placeholder="Fats (g)" />
+    <input id="proteins" type="number" placeholder="Protein (g)" />
+
+    <button onclick="addMeals()">Add</button>
+    <ul id="macroslist"></ul>
+  </div>
+</div>
+
+<div id="Ingredients" class="tabcontent">
+<h1>Enter macros for new ingredient (per 100g)</h1>
+  <input id="ingredient" type="text" placeholder="Ingredient" /> 
+  <input id="ingcal" type="number" placeholder="Calories (kcal)" />
+  <input id="ingcarb" type="number" placeholder="Carbohydrates (g)" />
+  <input id="ingfat" type="number" placeholder="Fats (g)" />
+  <input id="ingprotein" type="number" placeholder="Protein (g)" />
+  <button onclick="submitIngredient()">Add</button>
+  <table id="ingredientTable">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Calories</th>
+      <th>Carbs</th>
+      <th>Fats</th>
+      <th>Protein</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+</div>
+
+<div id="Meals" class="tabcontent">
+  <h1>Find out what is in your pre-set meals</h1>
+
+  <select id="menu" onchange="renderSelectedMeal()">
+    <option value="">Select a meal</option>
+  </select>
+
+  <div id="mealViewer"></div>
+</div>
+
+</body>
+
+</html>
