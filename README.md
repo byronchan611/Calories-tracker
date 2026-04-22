@@ -18,7 +18,7 @@ Automatically calculates total daily intake:
 - Carbohydrates
 - Fats
 - Protein
-- 
+
 ### Custom Ingredient Database
 Add and store nutritional information for ingredients.
 Customise values based on specific brands or store sources for improved accuracy.
