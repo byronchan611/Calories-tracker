@@ -1,72 +1,106 @@
-/* body {
-  font-family: 'Times New Roman', Times, serif, sans-serif;
-  max-width: 600px;
-  margin: 50px auto;
-  text-align: center;
-} */
+/* Global reset */
+* {
+  box-sizing: border-box;
+}
 
+body, html {
+  margin: 0;
+  height: 100%;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+/* Title */
 #title {
+  font-family: 'Bebas Neue', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+
+  color: #e6e6e6;
+  text-align: center;
+
   width: 100%;
   margin: 0;
   padding: 30px 20px;
-  text-align: center;
-  font-size: 34px;
-  font-weight: bold;
-  color: white;
 
-  background: linear-gradient(90deg, #ff4b2b, #ff416c);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  /* steel plate base */
+  background: linear-gradient(145deg, #1a1a1a, #0d0d0d, #2a2a2a);
+
+   text-shadow:
+    0 2px 0 rgba(0,0,0,0.9),
+    0 -1px 0 rgba(255,255,255,0.05),
+    3px 3px 6px rgba(0,0,0,0.7);
+
+  
+  /* stamped / pressed depth */
+  box-shadow:
+    inset 0 2px 5px rgba(255, 255, 255, 0.08),  /* top highlight */
+    inset 0 -4px 8px rgba(0, 0, 0, 0.8),         /* bottom depth */
+    0 6px 12px rgba(0, 0, 0, 0.6);               /* outer lift */
+
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.9);
+
+  /* slight “pressed metal” feel */
+  text-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.8),
+    0 -1px 0 rgba(255, 255, 255, 0.05);
 }
 
 #title:hover {
   opacity: 0.8;
 }
-body, html {
-  height: 100%;
-  margin: 0;
-  font-family: 'Times New Roman', Times, serif;
+
+#title::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("https://www.transparenttextures.com/patterns/brushed-alum.png");
+  opacity: 0.15;
+  pointer-events: none;
 }
 
-.tablink{
-    background-color: #555;
-    color: white;
-    float: left;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    padding: 14px 16px;
-    font-size: 17px;
-    width: 100%;
+/* Tabs (VERTICAL FULL WIDTH) */
+.tablink {
+  font-family: 'Bebas Neue', sans-serif;
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 14px 16px;
+
+  background-color: #555;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 17px;
+  text-align: left; /* optional: looks nicer for vertical tabs */
 }
 
 .tablink:hover {
   background-color: #777;
 }
 
-/* Style the tab content (and add height:100% for full page content) */
+/* Tab content */
 .tabcontent {
-  color: black;
   display: none;
   padding: 100px 20px;
   height: 100%;
+  color: black;
 }
 
+/* Remove any layout interference */
 .container {
-  margin-bottom: 20px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
-
-input {
+/* Inputs + buttons */
+input, button {
   padding: 10px;
   font-size: 16px;
 }
 
-button {
-  padding: 10px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
+/* Lists */
 ul {
   list-style: none;
   padding: 0;
@@ -77,25 +111,33 @@ li {
   border-bottom: 1px solid #f4f2f2;
 }
 
+/* Background */
 body {
   min-height: 100vh;
-  background-image: url("maxresdefault.jpg");
+  background-image: url("wp2510435.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  color: black
+  font-family: 'Bebas Neue', sans-serif;
 }
 
+/* Overlay */
 body::before {
   content: "";
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.6);
+  inset: 0;
+  background: rgba(255, 255, 255, 0.709);
   z-index: -1;
+}
+
+/* Table */
+#ingredientTable {
+  width: 100%;
+}
+
+tr {
+  border-bottom: 1px solid #ddd;
 }
 
 .modal {
@@ -158,11 +200,3 @@ body::before {
 
 /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
 .show {display:block;}
-
-tr {
-  border-bottom: 1px solid #ddd;
-}
-
-#ingredientTable {
-  width: 100%;
-}

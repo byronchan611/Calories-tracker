@@ -7,7 +7,11 @@ let meals = [];
 let presetMeals = [];
 let ingredients = [];
 let addToMeal = [];
+let macrosHistory = {};
 let weightChart = null;
+let historyChart = null;
+let historyChart2 = null;
+let pieChart = null;
 
 /////////////////////////////////////////////
 // INITIAL LOAD
@@ -18,7 +22,9 @@ document.addEventListener("DOMContentLoaded", () => {
   meals = loadMeals();
   presetMeals = loadPresetMeals();
   ingredients = loadIngredient(); 
+  macrosHistory = loadMacrosHistory();
 
+  renderMacrosHistory();
   renderWeights();
   renderMeals();
   renderIngredients(); 
@@ -26,6 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadIngredientIntoDropdown(); 
   openMenu();
   updateChart();
+  
 
   document.getElementById("defaultOpen").click();
 });
@@ -104,6 +111,7 @@ function updateChart() {
       labels,
       datasets: [
         {
+          label: "Bodyweight (kg)",
           data,
           borderColor: "blue",
           backgroundColor: "rgba(0,0,255,0.1)",
@@ -123,6 +131,7 @@ function updateChart() {
 /////////////////////////////////////////////
 
 function addMeals() {
+  const name = document.getElementById("name").value
   const calories = parseInt(document.getElementById("calories").value);
   const carbs = parseFloat(document.getElementById("carbohydrates").value);
   const fats = parseFloat(document.getElementById("fats").value);
@@ -136,6 +145,7 @@ function addMeals() {
   ) return;
 
   const meal = {
+    name,
     cal: calories || 0,
     carbs: carbs || 0,
     fats: fats || 0,
@@ -146,6 +156,7 @@ function addMeals() {
   meals.push(meal);
 
   saveMeals();
+  saveDailyMacros(); // ✅ IMPORTANT FIX
   renderMeals();
 
   document.getElementById("calories").value = "";
@@ -204,7 +215,8 @@ function renderMeals() {
     const li = document.createElement("li");
 
     li.innerHTML = `
-      Meal ${index + 1}: 
+      Meal ${index + 1}
+      [${meal.name}]:
       ${meal.cal.toFixed(1)} kcal, 
       ${meal.carbs.toFixed(1)}g carbs, 
       ${meal.fats.toFixed(1)}g fat, 
@@ -216,6 +228,7 @@ function renderMeals() {
   });
 
   const totals = updateTotal();
+  updatePieChart();
 
   const totalLi = document.createElement("li");
   totalLi.innerHTML = `
@@ -233,9 +246,75 @@ function renderMeals() {
 function deleteMeal(index) {
   meals.splice(index, 1);
   saveMeals();
+  saveDailyMacros(); // ✅ IMPORTANT FIX
   renderMeals();
 }
 
+function saveDailyMacros() {
+  const today = new Date().toISOString().split("T")[0];
+
+  const totals = updateTotal();
+
+  macrosHistory = JSON.parse(localStorage.getItem("macrosHistory")) || {};
+
+  macrosHistory[today] = {
+    cal: totals.totalCal,
+    carbs: totals.totalCarbs,
+    fats: totals.totalFat,
+    protein: totals.totalProteins
+  };
+
+  localStorage.setItem("macrosHistory", JSON.stringify(macrosHistory));
+
+  renderMacrosHistory(); // ✅ keep UI synced
+}
+
+function loadMacrosHistory() {
+  return JSON.parse(localStorage.getItem("macrosHistory")) || {};
+}
+
+function updatePieChart() {
+  const canvas = document.getElementById("pieChart");
+  if (!canvas) return;
+
+  const totals = updateTotal();
+
+  // const carbs = totals.map(w => w.totalCarbs);
+  // const fats = totals.map(w => w.totalFat);
+  // const protein = totals.map(w=>w.totalProteins);
+  const barColors = [
+  "rgba(255,0,0,1.0)",
+  "rgba(0,255,0,0.8)",
+  "rgba(0,0,255,0.6)",
+  ];
+
+  if (pieChart) pieChart.destroy();
+
+  const xValues = ["Carbs","Fats","Protein"];
+  const totalcal = totals.totalCarbs*4 + totals.totalFat*9 + totals.totalProteins*4;
+  const yValues = [
+    (totals.totalCarbs*4/totalcal)*100,
+    (totals.totalFat*9/totalcal)*100,
+    (totals.totalProteins*4/totalcal)*100
+  ];
+
+  pieChart = new Chart(canvas, {
+    type: "pie",
+    data: {
+    labels: xValues,
+    datasets: [{
+      backgroundColor: barColors,
+      data: yValues
+    }]
+  },
+    options: {
+    title: {
+    display: true,
+    text: "Daily Calories Distribution"
+    }
+  }
+});
+}
 /////////////////////////////////////////////
 // PRESET MEALS
 /////////////////////////////////////////////
@@ -326,16 +405,6 @@ function deletePresetMeal() {
 // ADD INGREDIENTS TO CONSTRUCT MEALS (POPUP WINDOW)
 /////////////////////////////////////////////
 
-// function selectIngredient() {
-//   const index = document.getElementById("ingredientSelect").value;
-//   if (index === "") return;
-
-//   const ing = ingredients[parseInt(index)];
-
-//   addToMeal.push(ing);
-//   alert("Added Ingredient");
-// }
-
 function addIngredients(){
   const index = document.getElementById("ingredientSelect").value;
   if (index === "") return;
@@ -371,44 +440,6 @@ function renderComponents() {
     list.appendChild(li);
   });
 }
-
-// function constructMeal(){
-
-//   const mealname = document.getElementById("newmealname").value
-//   let cal = 0;
-//   let carb = 0;
-//   let fat = 0;
-//   let protein = 0;
-
-//   addToMeal.forEach((component, index) =>{
-//     cal+=component.cal*component.amount/100; 
-//     carb+=component.carbs*component.amount/100;
-//     fat+=component.fats*component.amount/100;
-//     protein+=component.protein*component.amount/100;
-//   })
-
-//   const preset = {
-//     mealname,
-//     calories: cal || 0,
-//     carbohydrates: carb || 0,
-//     fats: fat || 0,
-//     protein: protein || 0
-//   };
-  
-
-//   presetMeals.push(preset);
-
-//   savePresetMeals();
-//   loadPresetMealsIntoDropdown();
-
-//   alert("Preset meal saved!");
-  
-//   // Reset addToMeal list
-//   addToMeal = [];
-//   renderComponents();
-//   document.getElementById("amount") = ""
-// }
-
 
 function constructMeal(){
 
@@ -537,46 +568,6 @@ function deleteIngredient(index) {
   loadIngredientIntoDropdown();
 }
 
-
-// function selectIngredient() {
-//   const index = document.getElementById("ingredientSelect").value;
-//   if (index === "") return;
-
-//   const ing = ingredients[parseInt(index)];
-
-//   document.getElementById("calories").value = ing.ing_calories;
-//   document.getElementById("carbohydrates").value = ing.ing_carbohydrates;
-//   document.getElementById("fats").value = ing.ing_fats;
-//   document.getElementById("proteins").value = ing.ing_protein;
-// }
-
-// function deletePresetMeal() {
-//   const select = document.getElementById("ingredientSelect");
-//   const index = select.value;
-
-//   if (index === "") {
-//     alert("Please select an ingredient to delete.");
-//     return;
-//   }
-
-//   // Remove from array
-//   ingredients.splice(parseInt(index), 1);
-
-//   // Save updated list
-//   saveIngredient();
-
-//   // Refresh dropdown + clear inputs
-//   loadIngredientIntoDropdown();
-//   select.value = "";
-
-//   document.getElementById("calories").value = "";
-//   document.getElementById("carbohydrates").value = "";
-//   document.getElementById("fats").value = "";
-//   document.getElementById("proteins").value = "";
-
-//   alert("Ingredient deleted.");
-// }
-
 /////////////////////////////////////////////
 // MEALS
 /////////////////////////////////////////////
@@ -629,6 +620,111 @@ function renderSelectedMeal() {
 
     ${componentsHTML}
   `;
+}
+
+/////////////////////////////////////////////
+// HISTORY
+/////////////////////////////////////////////
+
+function renderMacrosHistory() {
+  const list = document.getElementById("macroHistoryList");
+  if (!list) return;
+
+  list.innerHTML = "";
+
+  const entries = Object.entries(macrosHistory);
+
+  // optional: sort by date
+  entries.sort((a, b) => new Date(a[0]) - new Date(b[0]));
+
+  entries.forEach(([date, data]) => {
+    const li = document.createElement("li");
+
+    li.innerHTML = `
+      <strong>${date}</strong> — 
+      ${data.cal.toFixed(0)} kcal | 
+      ${data.carbs.toFixed(0)}g carbs | 
+      ${data.fats.toFixed(0)}g fat | 
+      ${data.protein.toFixed(0)}g protein
+    `;
+
+    list.appendChild(li);
+  });
+  updatehistoryChart();
+}
+
+function updatehistoryChart() {
+  const canvas = document.getElementById("historyChart");
+  if (!canvas) return;
+
+  const canvas2 = document.getElementById("historyChart2");
+  if (!canvas2) return;
+
+  const entries = Object.entries(macrosHistory);
+
+  if (entries.length === 0) return;
+
+  // sort by date
+  entries.sort((a, b) => new Date(a[0]) - new Date(b[0]));
+
+  const labels = entries.map(([date]) => date);
+  const calories = entries.map(([_, data]) => data.cal);
+
+  const carbs = entries.map(([_, data]) => data.carbs);
+  const fats = entries.map(([_, data]) => data.fats);
+  const protein = entries.map(([_, data]) => data.protein);
+
+  if (historyChart) historyChart.destroy();
+  if (historyChart2) historyChart2.destroy();
+
+  historyChart = new Chart(canvas, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [
+        {
+          label:"calories",
+          data: calories,
+          borderColor: "blue",
+          backgroundColor: "rgba(0,0,255,0.1)",
+          fill: true
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  });
+
+  historyChart2 = new Chart(canvas2, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [
+        {
+          label:"carbs",
+          data: carbs,
+          borderColor: "red",
+          fill: false
+        },{
+          label:"fats",
+          data: fats,
+          borderColor: "green",
+          fill: false
+        },{
+          label:"protein",
+          data: protein,
+          borderColor: "blue",
+          fill: false
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  });
 }
 
 /////////////////////////////////////////////

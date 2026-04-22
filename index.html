@@ -3,23 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Byron's Super Bang Bang Amazing Bodyweight Tracker</title>
+  <title>Byron's Super Bang Bang Amazing PokeCoach</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-<h1 id="title" onclick="goHome()">Byron's Super Bang Bang Amazing Bodyweight Tracker</h1>
+<h1 id="title" onclick="goHome()">Byron's Super Bang Bang Amazing PokeCoach</h1>
 <button class="tablink" onclick="openPage('Home', this, 'red')" id="homeTab" style="display:none;">
   Home
 </button>
 
 <!-- <button class="tablink" onclick="openPage('Home', this, 'red')" id="defaultOpen">Home</button> -->
-<button class="tablink" onclick="openPage('Bodyweight', this, 'green')">Bodyweight</button>
-<button class="tablink" onclick="openPage('Calories', this, 'blue')">Calories</button>
+<button class="tablink" onclick="openPage('Bodyweight', this, 'black')">Bodyweight</button>
+<button class="tablink" onclick="openPage('Calories', this, 'green')">Calories</button>
 <button class="tablink" onclick="openPage('Ingredients', this, 'orange')" >Ingredients</button>
-<button class="tablink" onclick="openPage('Meals', this, 'purple')" >Meals</button>
+<button class="tablink" onclick="openPage('Meals', this, 'blue')" >Meals</button>
+<button class="tablink" onclick="openPage('History', this, 'red')" >History</button>
 
 
 <div id="Home" class="tabcontent">
@@ -103,6 +105,7 @@
     <button onclick="deletePresetMeal()">Delete Selected Meal</button>
 
     <h3>New meal</h3>
+    <input id="name" type="text" placeholder="Meal name"/>
     <input id="calories" type="number" placeholder="Calories (kcal)" />
     <input id="carbohydrates" type="number" placeholder="Carbohydrates (g)" />
     <input id="fats" type="number" placeholder="Fats (g)" />
@@ -110,6 +113,7 @@
 
     <button onclick="addMeals()">Add</button>
     <ul id="macroslist"></ul>
+    <canvas id="pieChart"></canvas>
   </div>
 </div>
 
@@ -144,6 +148,13 @@
   </select>
 
   <div id="mealViewer"></div>
+</div>
+
+<div id="History" class="tabcontent">
+  <h1>History</h1>
+  <ul id="macroHistoryList"></ul>
+  <canvas id="historyChart"></canvas>
+  <canvas id="historyChart2"></canvas>
 </div>
 
 </body>
